@@ -203,7 +203,7 @@ function toggleReverb(verbOn) {
 
 /* set initial amount and bypass it */
 changeReverbDecay(2);
-toggleReverb(false);
+toggleReverb(true);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Filter Functions
