@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Import our external library, Tone.js -->
+    <!-- Note that unlike the other code files we want it to load before anything else so we don't include defer -->
+    <script src="https://unpkg.com/tone"></script>
+
+    <!-- Import our CSS stylesheets -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Import our JS files -->
+    <!-- As these reference to DOM elements, we want to load them after it has loaded, so we use the defer property -->
+    <!-- https://developer.mozilla.org/en-US/docs/Web/API/HTMLScriptElement/defer -->
+    <!-- This first script has some functions for generic tasks -->
+    <script src="helperFunctions.js" defer></script>
+    <!-- This second script initialises the audio synthesizer system using tone -->
+    <script src="toneSetup.js" defer></script>
+    <!-- This third script handles sending notes from the keyboard controller to the synthesizer, again kept seperate
+       so that it can be modular -->
+    <script src="keyboardController.js" defer></script>
+    <!-- The last script handles connecting the UI to the synthesizer : this is where you'll be working -->
+    <script src="UIControls.js" defer></script>
+
+    <title>Sound Constellation</title>
+
+    <!-- favicon was sourced from favicon.io but the original graphics are copyright 2020 Twitter, Inc 
+       and other contributors -->
+    <!-- They are licensed under CC-BY 4.0 as linked below -->
+    <!-- https://creativecommons.org/licenses/by/4.0/ -->
+    <!-- <link rel="icon" type="image/png" href="./assets/favicon.png" /> -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- Intro Modal popup -->
+    <!-- Websites are subject to an autoplay policy, so need user interaction before making sound -->
+    <!-- In this case we use the interaction of closing the modal to trigger loading the synth -->
+    <!-- https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay -->
+    <dialog id="introDialog">
+      <p>
+        This synthesizer will make some noise, please check your system's volume
+        setting.
+      </p>
+      <button id="dialogCloseButton" autofocus>OK</button>
+    </dialog>
+
+    <!-- <input type="range" id="frequencySlider" min="0" max="20000" /> -->
+    <main class="stage">
+      <header class="header"><h2>Sound Constellation</h2></header>
+      <div class="constellation-wrapper">
+        <canvas id="starCanvas"></canvas>
+
+        <section class="constellation">
+          <!-- Row 1 -->
+          <button
+            class="cell star"
+            data-note="C3"
+            aria-label="star C3"
+          ></button>
+          <button
+            class="cell star"
+            data-note="D3"
+            aria-label="star D3"
+          ></button>
+          <button
+            class="cell star"
+            data-note="E3"
+            aria-label="star E3"
+          ></button>
+          <button
+            class="cell star"
+            data-note="G3"
+            aria-label="star G3"
+          ></button>
+
+          <!-- Row 2 -->
+          <button
+            class="cell star"
+            data-note="A3"
+            aria-label="star A3"
+          ></button>
+          <button
+            class="cell star"
+            data-note="C4"
+            aria-label="star C4"
+          ></button>
+          <button
+            class="cell star"
+            data-note="D4"
+            aria-label="star D4"
+          ></button>
+          <button
+            class="cell star"
+            data-note="E4"
+            aria-label="star E4"
+          ></button>
+
+          <!-- Row 3-->
+          <button
+            class="cell star"
+            data-note="G4"
+            aria-label="star G4"
+          ></button>
+          <button
+            class="cell star"
+            data-note="A4"
+            aria-label="star A4"
+          ></button>
+          <button
+            class="cell star"
+            data-note="C5"
+            aria-label="star C5"
+          ></button>
+          <button
+            class="cell star"
+            data-note="D5"
+            aria-label="star D5"
+          ></button>
+
+          <!-- Row 4  -->
+          <button
+            class="cell star"
+            data-note="E5"
+            aria-label="star E5"
+          ></button>
+          <button
+            class="cell star"
+            data-note="G5"
+            aria-label="star G5"
+          ></button>
+          <button
+            class="cell star"
+            data-note="A5"
+            aria-label="star A5"
+          ></button>
+          <button
+            class="cell star"
+            data-note="C6"
+            aria-label="star C6"
+          ></button>
+        </section>
+
+        <!-- images -->
+        <img src="./assets/1.png" class="bg-constellation top-left" alt="1" />
+        <img
+          src="./assets/2.png"
+          class="bg-constellation bottom-right"
+          alt="2"
+        />
+      </div>
+
+      <section class="seq-controls">
+        <button id="btnPlay" class="fx-btn" aria-label="Play">
+          <i class="fa-solid fa-play"></i>
+        </button>
+        <button id="btnClear" class="fx-btn" aria-label="Clear">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </section>
+
+      <section class="fx-dock" aria-label="effects">
+        <!-- Reverb control -->
+<div class="fx-item">
+  <i class="fa-solid fa-water"></i>
+  <input
+    id="reverbDecay"
+    class="fx-slider"
+    type="range"
+    min="0.1"
+    max="10"
+    step="0.1"
+    value="2"
+    aria-label="Reverb decay (seconds)"
+  />
+</div>
+
+      <!-- Delay feedback input -->
+      <!-- <input type="range" id="delayFeedbackInput" min="0" max="1" step="0.01" />
+      <p id="volumeFeedback"></p> -->
+
+      <footer class="footer">
+        <p>Sound Constellation Yang Luo 2025</p>
+      </footer>
+    </main>
+  </body>
+</html>

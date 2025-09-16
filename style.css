@@ -1,0 +1,411 @@
+/* .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:. .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.  */
+/* Font Imports */
+
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:. .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.  */
+/* CSS Reset : based on Kevin Powell's code */
+/* https://youtu.be/2lyDv0wOQuQ?si=VtGSWSv8WB0flLd1 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark light;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 50% 20%, var(--bg1) 0%, var(--bg0) 60%);
+  color: #eff1e8;
+  font: 1rem/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  transition: background-color 0.12s linear, background-image 0.12s linear;
+  height: 100vh;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/* .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:. .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.  */
+/* Storing custom CSS properties */
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties */
+
+:root {
+  --gap: 2rem;
+  --radius: 0.75rem;
+  --stage-pad: 1.25rem;
+  --border: solid 1rem var(--col02);
+  --col01: #0e1211;
+  --col02: #f1e869;
+  --cell: 3.25rem;
+  --bg0: #0b0c10;
+  --bg1: #0f1117;
+  --stroke: rgba(225, 225, 225, 0.08);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --col02: #0e1211;
+    --col01: #f1e869;
+    --border: solid 1rem var(--col02);
+  }
+}
+
+/* .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:. .:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.  */
+/* Intro Modal dialog */
+/* need to apply to open dialog, otherwise flex interferes with closing */
+
+dialog[open] {
+  margin: auto; /* place in centre */
+  padding: 1rem;
+  background-color: var(--col01);
+  color: var(--col02);
+  border: var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+dialog::backdrop {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* background overlay when modal is open */
+}
+#dialogCloseButton {
+  background-color: var(--col01);
+  color: var(--col02);
+  padding: 0 1rem;
+}
+
+/* .This is my css:*/
+
+.stage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-content: center;
+  padding: var(--stage-pad);
+  gap: 1rem;
+}
+
+/* This is the star grid */
+.constellation {
+  display: grid;
+  grid-template-columns: repeat(4, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+  justify-content: center;
+  align-content: center;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 0.0625rem solid var(--stroke);
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(0.25rem);
+  background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      180% 120% at 50% 10%,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0) 50%
+    );
+}
+
+/* draw lines between cells */
+.constellation-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* add constellation images */
+.bg-constellation {
+  position: absolute;
+  width: 180px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* position for images  */
+.top-left {
+  top: -150px;
+  left: -180px;
+}
+
+.bottom-right {
+  bottom: -150px;
+  right: -180px;
+}
+
+#starCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* so clicks go through to stars */
+}
+.constellation {
+  position: relative; /* stars on top of canvas */
+  display: grid;
+  grid-template-columns: repeat(4, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+}
+
+/* cells */
+.cell {
+  appearance: none;
+  border: none;
+  background: transparent;
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.cell:hover {
+  transform: translateY(-0.0625rem);
+}
+.cell:active {
+  transform: translateY(0.0625rem) scale(0.98);
+}
+
+/* when click stars */
+.cell.star::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.65);
+  transition: width 0.12s ease, height 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.cell.star::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(0.0625rem);
+  transition: width 0.12s ease, height 0.12s ease, opacity 0.12s ease;
+  opacity: 0.6;
+}
+
+.cell.is-on::before {
+  width: 1.25rem;
+  height: 1.25rem;
+  box-shadow: 0 0 1.25rem rgba(255, 255, 255, 0.9);
+}
+.cell.is-on::after {
+  width: 2.25rem;
+  height: 2.25rem;
+  opacity: 0.9;
+}
+
+.tone-a::before {
+  background: hsl(200 90% 60%);
+  box-shadow: 0 0 1rem hsl(200 90% 60% / 0.8);
+}
+.tone-b::before {
+  background: hsl(260 90% 60%);
+  box-shadow: 0 0 1rem hsl(260 90% 60% / 0.8);
+}
+.tone-c::before {
+  background: hsl(320 90% 60%);
+  box-shadow: 0 0 1rem hsl(320 90% 60% / 0.8);
+}
+.tone-d::before {
+  background: hsl(40 95% 58%);
+  box-shadow: 0 0 1rem hsl(40 95% 58% / 0.85);
+}
+
+.header,
+.footer {
+  height: 0.5rem;
+  width: 100%;
+}
+
+/*rangeSlider css*/
+
+input[type="range"] {
+  width: 100%;
+  margin: 5.85px 0;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: var(--col01);
+  border: 1.1px solid #18d501;
+  border-radius: 1px;
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  margin-top: -6.95px;
+  width: 23px;
+  height: 23px;
+  background: #749643;
+  border: 2.5px solid #83e584;
+  border-radius: 12px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: #276c30;
+}
+input[type="range"]::-moz-range-track {
+  background: var(--col01);
+  border: 1.1px solid #18d501;
+  border-radius: 1px;
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 23px;
+  height: 23px;
+  background: #749643;
+  border: 2.5px solid #83e584;
+  border-radius: 12px;
+  cursor: pointer;
+}
+input[type="range"]::-ms-track {
+  background: transparent;
+  border-color: transparent;
+  border-width: 8.45px 0;
+  color: transparent;
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+}
+input[type="range"]::-ms-fill-lower {
+  background: #194620;
+  border: 1.1px solid #18d501;
+  border-radius: 2px;
+}
+input[type="range"]::-ms-fill-upper {
+  background: var(--col01);
+  border: 1.1px solid #18d501;
+  border-radius: 2px;
+}
+input[type="range"]::-ms-thumb {
+  width: 23px;
+  height: 23px;
+  background: #749643;
+  border: 2.5px solid #83e584;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 0px;
+  /*Needed to keep the Edge thumb centred*/
+}
+input[type="range"]:focus::-ms-fill-lower {
+  background: var(--col01);
+}
+input[type="range"]:focus::-ms-fill-upper {
+  background: #276c30;
+}
+/*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
+how to remove the virtical space around the range input in IE*/
+@supports (-ms-ime-align: auto) {
+  /* Pre-Chromium Edge only styles, selector taken from hhttps://stackoverflow.com/a/32202953/7077589 */
+  input[type="range"] {
+    margin: 0;
+    /*Edge starts the margin from the thumb, not the track as other browsers do*/
+  }
+}
+
+/* icon css */
+.fx-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.fx-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.05);
+}
+
+.fx-btn:active {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(0.95);
+}
+
+.fx-btn i {
+  font-size: 1.4rem;
+  color: white;
+  pointer-events: none;
+}
+
+.seq-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.seq-controls .fx-btn {
+  font-size: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  background: var(--col01);
+  color: var(--col02);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.seq-controls .fx-btn:hover {
+  background: var(--col02);
+  color: var(--col01);
+}
+
+.seq-controls .fx-btn:active {
+  transform: scale(0.95);
+}
