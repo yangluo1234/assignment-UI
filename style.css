@@ -255,8 +255,8 @@ dialog::backdrop {
   box-shadow: 0 0 1rem hsl(40 95% 58% / 0.85);
 }
 
-.header,
-.footer {
+.header {
+  text-align: center;
   height: 0.5rem;
   width: 100%;
 }
@@ -443,4 +443,14 @@ how to remove the virtical space around the range input in IE*/
 
 .seq-controls .fx-btn:active {
   transform: scale(0.95);
+}
+
+.footer {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+  color: #ddd;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
 }
