@@ -44,7 +44,7 @@ function updateSliderVisual(slider) {
 
   reverbIcon.style.fontSize = 20 + percent * 20 + "px";
 
-  const blueValue = Math.floor(150 + percent * 105); // 150~255
+  const blueValue = Math.floor(150 + percent * 105);
   reverbIcon.style.color = `rgb(0, ${blueValue}, 255)`;
 }
 
@@ -53,7 +53,7 @@ decaySlider.addEventListener("input", (e) => updateSliderVisual(e.target));
 updateSliderVisual(decaySlider);
 
 /////////////Project Logic ///////////
-// ===== Constellation: collect notes & points, preview on click, play on demand =====
+// ===== Constellation: collect notes & points=====
 let constellationNotes = [];
 let constellationPoints = [];
 
@@ -84,7 +84,7 @@ function addStarToPath(el) {
   drawConstellation();
 }
 
-//Play the constellation path using Math.random for slight variations
+//Play the constellation path using Math.random for slight change in time and velocity
 function playConstellationPath() {
   if (constellationNotes.length === 0) return;
   const start = Tone.now() + 0.1;
@@ -94,7 +94,7 @@ function playConstellationPath() {
 
     polySynth.triggerAttackRelease(n, "8n", time, velocity);
   });
-
+  // Change background color each time play is clicked
   const hue = Math.floor(Math.random() * 360);
   document.body.style.background = `radial-gradient(circle at 50% 20%, hsl(${hue} 35% 12%) 0%, hsl(${hue} 40% 7%) 60%)`;
 }
