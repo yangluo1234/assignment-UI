@@ -8,7 +8,8 @@
 
 //const volumeFeebackDisplay = document.getElementById("volumeFeedback");
 
-const reverbDecaySlider = document.getElementById("reverbDecay");
+const decaySlider = document.getElementById("reverbDecay");
+const reverbIcon = document.getElementById("reverbIcon");
 
 document
   .getElementById("btnPlay")
@@ -33,6 +34,23 @@ document.getElementById("dialogCloseButton").addEventListener("click", () => {
 /* because this can be through the above button, or by pressing esc, we tie it to the actual close event */
 /* the referenced toneInit function is defined in toneSetup.js */
 introModal.addEventListener("close", toneInit);
+
+//////Update Reverb Icon based on wet value////////
+function updateSliderVisual(slider) {
+  const val = parseFloat(slider.value);
+  changeReverbDecay(val);
+
+  const percent = (val - slider.min) / (slider.max - slider.min);
+
+  reverbIcon.style.fontSize = 20 + percent * 20 + "px";
+
+  const blueValue = Math.floor(150 + percent * 105); // 150~255
+  reverbIcon.style.color = `rgb(0, ${blueValue}, 255)`;
+}
+
+decaySlider.addEventListener("input", (e) => updateSliderVisual(e.target));
+
+updateSliderVisual(decaySlider);
 
 /////////////Project Logic ///////////
 // ===== Constellation: collect notes & points, preview on click, play on demand =====
@@ -219,14 +237,14 @@ function changeFilterQ(newFilterQ) {
 ///////// Delay Functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function changeDelayFeedback(newFeedbackAmt) {
-  delay.feedback.value = newFeedbackAmt;
-}
+// function changeDelayFeedback(newFeedbackAmt) {
+//   delay.feedback.value = newFeedbackAmt;
+// }
 
-delayFeedbackSlider.addEventListener("change", (e) => {
-  let inputValue = e.target.value;
-  changeDelayFeedback(inputValue);
-});
+// delayFeedbackSlider.addEventListener("change", (e) => {
+//   let inputValue = e.target.value;
+//   changeDelayFeedback(inputValue);
+// });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Meter Feedback
@@ -246,21 +264,21 @@ starCells.forEach((el) => {
   );
 });
 
-function findCurrentVolume() {
-  let currentVolume = meter.getValue();
+// function findCurrentVolume() {
+//   let currentVolume = meter.getValue();
 
-  if (!bgActive) return;
+//   if (!bgActive) return;
 
-  let clampedValue = clamp(currentVolume, -80, 0);
-  let remappedValue = remapRange(clampedValue, -80, 0, 0, 1);
-  volumeFeebackDisplay.textContent = remappedValue;
-  //console.log(clampedValue);
-  // document.body.style.backgroundColor = `color-mix(in hsl,red, blue ${remappedValue}%)`;
-  //const hue = Math.round(remappedValue * 360);
-  //  const hue2 = (hue + 60) % 360;
-  // document.body.style.backgroundImage = `linear-gradient(135deg, hsl(${hue} 80% 50%), hsl(${hue2} 80% 50%))`;
-}
-setInterval(findCurrentVolume, 200);
+//   let clampedValue = clamp(currentVolume, -80, 0);
+//   let remappedValue = remapRange(clampedValue, -80, 0, 0, 1);
+//   volumeFeebackDisplay.textContent = remappedValue;
+//   //console.log(clampedValue);
+//   // document.body.style.backgroundColor = `color-mix(in hsl,red, blue ${remappedValue}%)`;
+//   //const hue = Math.round(remappedValue * 360);
+//   //  const hue2 = (hue + 60) % 360;
+//   // document.body.style.backgroundImage = `linear-gradient(135deg, hsl(${hue} 80% 50%), hsl(${hue2} 80% 50%))`;
+// }
+// setInterval(findCurrentVolume, 200);
 
 //volumeFeebackDisplay
 

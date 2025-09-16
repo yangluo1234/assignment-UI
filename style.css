@@ -383,6 +383,41 @@ how to remove the virtical space around the range input in IE*/
   pointer-events: none;
 }
 
+/* Reverb icons */
+
+#reverbIcon {
+  color: #3af;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.fx-dock {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.fx-item {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: min(42rem, 92vw);
+}
+
+.fx-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 2rem;
+  text-align: center;
+}
+
+.fx-slider {
+  flex: 1;
+  min-width: 12rem;
+}
+
+/* ////// */
+
 .seq-controls {
   display: flex;
   justify-content: center;

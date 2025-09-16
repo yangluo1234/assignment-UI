@@ -155,6 +155,23 @@
         />
       </div>
 
+      <section class="fx-dock" aria-label="effects">
+        <!-- Reverb control -->
+        <div class="fx-item">
+          <i id="reverbIcon" class="fa-solid fa-water fx-icon"></i>
+          <input
+            id="reverbDecay"
+            class="fx-slider"
+            type="range"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value="2"
+            aria-label="Reverb decay time"
+          />
+        </div>
+      </section>
+
       <section class="seq-controls">
         <button id="btnPlay" class="fx-btn" aria-label="Play">
           <i class="fa-solid fa-play"></i>
@@ -163,22 +180,6 @@
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
       </section>
-
-      <section class="fx-dock" aria-label="effects">
-        <!-- Reverb control -->
-<div class="fx-item">
-  <i class="fa-solid fa-water"></i>
-  <input
-    id="reverbDecay"
-    class="fx-slider"
-    type="range"
-    min="0.1"
-    max="10"
-    step="0.1"
-    value="2"
-    aria-label="Reverb decay (seconds)"
-  />
-</div>
 
       <!-- Delay feedback input -->
       <!-- <input type="range" id="delayFeedbackInput" min="0" max="1" step="0.01" />
