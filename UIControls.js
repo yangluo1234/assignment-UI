@@ -308,6 +308,70 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
+//
+// 1) Fixed, well-spaced percentage positions for 16 stars
+const STAR_POS = [
+  { x: 12, y: 18 },
+  { x: 28, y: 12 },
+  { x: 43, y: 20 },
+  { x: 65, y: 14 },
+  { x: 82, y: 22 },
+  { x: 16, y: 38 },
+  { x: 33, y: 34 },
+  { x: 52, y: 32 },
+  { x: 73, y: 36 },
+  { x: 88, y: 42 },
+  { x: 10, y: 58 },
+  { x: 29, y: 52 },
+  { x: 47, y: 60 },
+  { x: 66, y: 55 },
+  { x: 84, y: 66 },
+  { x: 39, y: 74 },
+];
+
+// 2) Apply positions to the 16 buttons (stars)
+function applyPresetStarLayout() {
+  const stars = document.querySelectorAll(".constellation .cell.star");
+  const count = Math.min(stars.length, STAR_POS.length);
+
+  for (let i = 0; i < count; i++) {
+    const p = STAR_POS[i];
+    const el = stars[i];
+    el.style.left = p.x + "%";
+    el.style.top = p.y + "%";
+  }
+
+  // // Optional: desynchronised twinkle if you added CSS animations
+  // stars.forEach((el) => {
+  //   el.style.setProperty(
+  //     "--twinkle-offset",
+  //     (Math.random() * 2).toFixed(2) + "s"
+  //   );
+  // });
+
+  // Make sure canvas matches the container and redraw lines
+  if (typeof resizeCanvas === "function") resizeCanvas();
+  if (typeof drawConstellationEmphasised === "function") {
+    drawConstellationEmphasised();
+  } else if (typeof drawConstellation === "function") {
+    drawConstellation();
+  }
+}
+
+// 3) Run once when the page is ready
+window.addEventListener("load", applyPresetStarLayout);
+
+// 4) On resize, stars keep their % positions; just resize/redraw the canvas
+window.addEventListener("resize", () => {
+  if (typeof resizeCanvas === "function") resizeCanvas();
+  if (typeof drawConstellationEmphasised === "function") {
+    drawConstellationEmphasised();
+  } else if (typeof drawConstellation === "function") {
+    drawConstellation();
+  }
+});
+
+// Add event listeners to star cells
 document.querySelectorAll(".cell.star").forEach((cell) => {
   cell.addEventListener("pointerdown", () => {
     addStarToPath(cell);
