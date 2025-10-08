@@ -330,7 +330,15 @@ const STAR_POS = [
 ];
 
 // 2) Apply positions to the 16 buttons (stars)
+// Note: stars are position: absolute inside a position: relative container
+// Use % positions that scale with the container size
+// Use left/top % values, and translate(-50%, -50%) to center the stars
+// Also limit to the first 16 stars
 function applyPresetStarLayout() {
+  // Find all the stars
+  // Limit to the number of positions I have
+  // Apply the positions
+  // If you have more stars than positions, the extras are left in the top-left corner
   const stars = document.querySelectorAll(".constellation .cell.star");
   const count = Math.min(stars.length, STAR_POS.length);
 
@@ -340,14 +348,6 @@ function applyPresetStarLayout() {
     el.style.left = p.x + "%";
     el.style.top = p.y + "%";
   }
-
-  // // Optional: desynchronised twinkle if you added CSS animations
-  // stars.forEach((el) => {
-  //   el.style.setProperty(
-  //     "--twinkle-offset",
-  //     (Math.random() * 2).toFixed(2) + "s"
-  //   );
-  // });
 
   // Make sure canvas matches the container and redraw lines
   if (typeof resizeCanvas === "function") resizeCanvas();
@@ -372,11 +372,25 @@ window.addEventListener("resize", () => {
 });
 
 // Add event listeners to star cells
-document.querySelectorAll(".cell.star").forEach((cell) => {
-  cell.addEventListener("pointerdown", () => {
+document.querySelectorAll(".cell.star").forEach((cell, i) => {
+  // Stagger the idle twinkle (reads in CSS as var(--twinkleDelay))
+  cell.style.setProperty("--twinkleDelay", ((i * 0.27) % 3).toFixed(2));
+
+  // Play + record + flash-on when the star is pressed
+  cell.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    flashOn(cell);
     addStarToPath(cell);
   });
 });
+
+// Small helper: add/clear the .is-on class for a quick visual "pop"
+// Default duration 120ms
+// Used when a star is pressed
+function flashOn(el, ms = 120) {
+  el.classList.add("is-on");
+  setTimeout(() => el.classList.remove("is-on"), ms);
+}
 
 function drawConstellation() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
