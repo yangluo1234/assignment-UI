@@ -25,7 +25,7 @@ html {
 body {
   margin: 0;
   background: radial-gradient(circle at 50% 20%, var(--bg1) 0%, var(--bg0) 60%);
-  color: #eff1e8;
+  color: #fbfbfb;
   font: 1rem/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   transition: background-color 0.12s linear, background-image 0.12s linear;
   height: 100vh;
@@ -47,13 +47,16 @@ video {
   --gap: 2rem;
   --radius: 0.75rem;
   --stage-pad: 1.25rem;
-  --border: solid 1rem var(--col02);
   --col01: #0e1211;
-  --col02: #f1e869;
+  --col02: #f2e200;
+  --border: solid 1rem var(--col02);
   --cell: 3.25rem;
   --bg0: #0b0c10;
   --bg1: #0f1117;
   --stroke: rgba(225, 225, 225, 0.08);
+  --btn-bg: #f2e200;
+  --btn-bg-hover: #123b5a;
+  --btn-text: var(--col02);
 }
 
 @media (prefers-color-scheme: light) {
@@ -97,43 +100,120 @@ dialog::backdrop {
 
 .stage {
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto auto auto;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--stage-pad);
-  gap: 1rem;
+  padding-inline: clamp(12px, 3vw, 24px);
 }
 
-/* This is the star grid */
+/* This is the star sky */
+
 .constellation {
-  display: grid;
-  grid-template-columns: repeat(4, var(--cell));
-  grid-auto-rows: var(--cell);
-  gap: var(--gap);
-  justify-content: center;
-  align-content: center;
-  padding: 0.75rem;
-  border-radius: var(--radius);
-  border: 0.0625rem solid var(--stroke);
-  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(0.25rem);
+  position: absolute;
+  inset: 0;
+}
+
+/* cells */
+.cell {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  scale: var(--s, 1);
+  transition: scale 0.12s ease, filter 0.12s ease;
+
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+.cell:hover {
+  --s: 1.02;
+}
+.cell:active {
+  --s: 0.98;
+}
+
+/* when click stars */
+.cell.star::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.65);
+  animation: idleTwinkle 3s ease-in-out infinite;
+  animation-delay: calc(var(--twinkleDelay, 0s) * 1s);
+  transition: width 0.12s ease, height 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+
+@keyframes idleTwinkle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    filter: blur(1.2px);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(0.94);
+    filter: blur(0);
+    opacity: 0.7;
+  }
+}
+
+.cell.star::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   background: radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0) 60%
-    ),
-    radial-gradient(
-      180% 120% at 50% 10%,
-      rgba(255, 255, 255, 0.03),
-      rgba(255, 255, 255, 0) 50%
-    );
+    circle,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(0.0625rem);
+  transition: width 0.12s ease, height 0.12s ease, opacity 0.12s ease;
+  opacity: 0.6;
+}
+.cell.is-on {
+  --s: 1.12;
+}
+
+.cell.is-on::before {
+  width: 1.25rem;
+  height: 1.25rem;
+  box-shadow: 0 0 1.25rem rgba(255, 255, 255, 0.9);
+}
+.cell.is-on::after {
+  width: 2.25rem;
+  height: 2.25rem;
+  opacity: 0.9;
 }
 
 /* draw lines between cells */
 .constellation-wrapper {
-  position: relative;
-  display: inline-block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
 
 /* add constellation images */
@@ -157,85 +237,10 @@ dialog::backdrop {
 
 #starCanvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* so clicks go through to stars */
-}
-.constellation {
-  position: relative; /* stars on top of canvas */
-  display: grid;
-  grid-template-columns: repeat(4, var(--cell));
-  grid-auto-rows: var(--cell);
-  gap: var(--gap);
-}
-
-/* cells */
-.cell {
-  appearance: none;
-  border: none;
-  background: transparent;
-  position: relative;
-  width: var(--cell);
-  height: var(--cell);
-  border-radius: 50%;
-  cursor: pointer;
-  touch-action: none;
-  outline: none;
-  transition: transform 0.12s ease, filter 0.12s ease;
-}
-.cell:hover {
-  transform: translateY(-0.0625rem);
-}
-.cell:active {
-  transform: translateY(0.0625rem) scale(0.98);
-}
-
-/* when click stars */
-.cell.star::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1rem;
-  height: 1rem;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.65);
-  transition: width 0.12s ease, height 0.12s ease, box-shadow 0.12s ease,
-    background-color 0.12s ease;
-}
-
-.cell.star::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1.75rem;
-  height: 1.75rem;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  filter: blur(0.0625rem);
-  transition: width 0.12s ease, height 0.12s ease, opacity 0.12s ease;
-  opacity: 0.6;
-}
-
-.cell.is-on::before {
-  width: 1.25rem;
-  height: 1.25rem;
-  box-shadow: 0 0 1.25rem rgba(255, 255, 255, 0.9);
-}
-.cell.is-on::after {
-  width: 2.25rem;
-  height: 2.25rem;
-  opacity: 0.9;
+  pointer-events: none;
 }
 
 .tone-a::before {
@@ -256,9 +261,10 @@ dialog::backdrop {
 }
 
 .header {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(8px, 2vh, 24px);
   text-align: center;
-  height: 0.5rem;
-  width: 100%;
 }
 
 /*rangeSlider css*/
@@ -356,31 +362,39 @@ how to remove the virtical space around the range input in IE*/
 
 /* icon css */
 .fx-btn {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--btn-bg);
+  color: var(--btn-text);
   border: none;
-  border-radius: 50%;
+  border-radius: 999px;
   height: 3rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding-inline: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 0 1px var(--btn-ring), 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .fx-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.05);
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 0 1px var(--btn-ring), 0 12px 28px rgba(0, 0, 0, 0.55);
 }
 
 .fx-btn:active {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.98);
 }
 
 .fx-btn i {
   font-size: 1.4rem;
-  color: white;
+  color: currentColor;
   pointer-events: none;
+}
+
+.fx-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0b0c10, 0 0 0 4px var(--btn-text);
 }
 
 /* Reverb icons */
@@ -393,8 +407,8 @@ how to remove the virtical space around the range input in IE*/
 
 .fx-dock {
   display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
+  place-items: center;
+  width: 100%;
 }
 
 .fx-item {
@@ -422,15 +436,13 @@ how to remove the virtical space around the range input in IE*/
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
 .seq-controls .fx-btn {
   font-size: 1.5rem;
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius);
-  background: var(--col01);
-  color: var(--col02);
+
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
@@ -445,13 +457,45 @@ how to remove the virtical space around the range input in IE*/
   transform: scale(0.95);
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
+
+.controls {
+  position: relative;
+  z-index: 3;
+  width: min(900px, 92vw);
+  margin-top: 0;
+  margin-bottom: clamp(16px, 6vh, 10vh);
+  display: grid;
+  gap: clamp(12px, 2.5vh, 20px);
+  place-items: center;
+}
+
 .footer {
-  text-align: center;
-  padding: 10px;
+  position: relative;
+  z-index: 3;
   margin-top: auto;
-  font-size: 0.9rem;
-  color: #ddd;
-  bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+/* ---------- Responsive Design ---------- */
+@media (max-width: 600px) {
+  .fx-item {
+    width: 100%;
+  }
+  .fx-slider {
+    min-width: 0;
+  }
+  .seq-controls {
+    gap: 0.75rem;
+  }
+}
+
+@media (min-height: 900px) {
+  .controls {
+    margin-top: 10vh;
+    margin-bottom: 5vh;
+  }
 }

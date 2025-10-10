@@ -308,11 +308,89 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-document.querySelectorAll(".cell.star").forEach((cell) => {
-  cell.addEventListener("pointerdown", () => {
+//
+// 1) Fixed, well-spaced percentage positions for 16 stars
+const STAR_POS = [
+  { x: 12, y: 18 },
+  { x: 28, y: 12 },
+  { x: 43, y: 20 },
+  { x: 65, y: 14 },
+  { x: 82, y: 22 },
+  { x: 16, y: 38 },
+  { x: 33, y: 34 },
+  { x: 52, y: 32 },
+  { x: 73, y: 36 },
+  { x: 88, y: 42 },
+  { x: 10, y: 58 },
+  { x: 29, y: 52 },
+  { x: 47, y: 60 },
+  { x: 66, y: 55 },
+  { x: 84, y: 66 },
+  { x: 39, y: 74 },
+];
+
+// 2) Apply positions to the 16 buttons (stars)
+// Note: stars are position: absolute inside a position: relative container
+// Use % positions that scale with the container size
+// Use left/top % values, and translate(-50%, -50%) to center the stars
+// Also limit to the first 16 stars
+function applyPresetStarLayout() {
+  // Find all the stars
+  // Limit to the number of positions I have
+  // Apply the positions
+  // If you have more stars than positions, the extras are left in the top-left corner
+  const stars = document.querySelectorAll(".constellation .cell.star");
+  const count = Math.min(stars.length, STAR_POS.length);
+
+  for (let i = 0; i < count; i++) {
+    const p = STAR_POS[i];
+    const el = stars[i];
+    el.style.left = p.x + "%";
+    el.style.top = p.y + "%";
+  }
+
+  // Make sure canvas matches the container and redraw lines
+  if (typeof resizeCanvas === "function") resizeCanvas();
+  if (typeof drawConstellationEmphasised === "function") {
+    drawConstellationEmphasised();
+  } else if (typeof drawConstellation === "function") {
+    drawConstellation();
+  }
+}
+
+// 3) Run once when the page is ready
+window.addEventListener("load", applyPresetStarLayout);
+
+// 4) On resize, stars keep their % positions; just resize/redraw the canvas
+window.addEventListener("resize", () => {
+  if (typeof resizeCanvas === "function") resizeCanvas();
+  if (typeof drawConstellationEmphasised === "function") {
+    drawConstellationEmphasised();
+  } else if (typeof drawConstellation === "function") {
+    drawConstellation();
+  }
+});
+
+// Add event listeners to star cells
+document.querySelectorAll(".cell.star").forEach((cell, i) => {
+  // Stagger the idle twinkle (reads in CSS as var(--twinkleDelay))
+  cell.style.setProperty("--twinkleDelay", ((i * 0.27) % 3).toFixed(2));
+
+  // Play + record + flash-on when the star is pressed
+  cell.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    flashOn(cell);
     addStarToPath(cell);
   });
 });
+
+// Small helper: add/clear the .is-on class for a quick visual "pop"
+// Default duration 120ms
+// Used when a star is pressed
+function flashOn(el, ms = 120) {
+  el.classList.add("is-on");
+  setTimeout(() => el.classList.remove("is-on"), ms);
+}
 
 function drawConstellation() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
