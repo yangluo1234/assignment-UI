@@ -25,7 +25,7 @@ html {
 body {
   margin: 0;
   background: radial-gradient(circle at 50% 20%, var(--bg1) 0%, var(--bg0) 60%);
-  color: #eff1e8;
+  color: #fbfbfb;
   font: 1rem/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   transition: background-color 0.12s linear, background-image 0.12s linear;
   height: 100vh;
@@ -47,13 +47,16 @@ video {
   --gap: 2rem;
   --radius: 0.75rem;
   --stage-pad: 1.25rem;
-  --border: solid 1rem var(--col02);
   --col01: #0e1211;
-  --col02: #f1e869;
+  --col02: #f2e200;
+  --border: solid 1rem var(--col02);
   --cell: 3.25rem;
   --bg0: #0b0c10;
   --bg1: #0f1117;
   --stroke: rgba(225, 225, 225, 0.08);
+  --btn-bg: #f2e200;
+  --btn-bg-hover: #123b5a;
+  --btn-text: var(--col02);
 }
 
 @media (prefers-color-scheme: light) {
@@ -359,31 +362,39 @@ how to remove the virtical space around the range input in IE*/
 
 /* icon css */
 .fx-btn {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--btn-bg);
+  color: var(--btn-text);
   border: none;
-  border-radius: 50%;
+  border-radius: 999px;
   height: 3rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding-inline: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 0 1px var(--btn-ring), 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .fx-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.05);
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 0 1px var(--btn-ring), 0 12px 28px rgba(0, 0, 0, 0.55);
 }
 
 .fx-btn:active {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.98);
 }
 
 .fx-btn i {
   font-size: 1.4rem;
-  color: white;
+  color: currentColor;
   pointer-events: none;
+}
+
+.fx-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0b0c10, 0 0 0 4px var(--btn-text);
 }
 
 /* Reverb icons */
@@ -431,8 +442,7 @@ how to remove the virtical space around the range input in IE*/
   font-size: 1.5rem;
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius);
-  background: var(--col01);
-  color: var(--col02);
+
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
