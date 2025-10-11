@@ -308,8 +308,9 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-//
-// 1) Fixed, well-spaced percentage positions for 16 stars
+// Preset star positions as % of container width/height
+//Defined as an array of objects with x/y properties
+
 const STAR_POS = [
   { x: 12, y: 18 },
   { x: 28, y: 12 },
@@ -329,8 +330,6 @@ const STAR_POS = [
   { x: 39, y: 74 },
 ];
 
-// 2) Apply positions to the 16 buttons (stars)
-// Note: stars are position: absolute inside a position: relative container
 // Use % positions that scale with the container size
 // Use left/top % values, and translate(-50%, -50%) to center the stars
 // Also limit to the first 16 stars
@@ -358,10 +357,10 @@ function applyPresetStarLayout() {
   }
 }
 
-// 3) Run once when the page is ready
+// Load and apply the star layout once at startup
 window.addEventListener("load", applyPresetStarLayout);
 
-// 4) On resize, stars keep their % positions; just resize/redraw the canvas
+//On resize, stars keep their % positions; just resize/redraw the canvas
 window.addEventListener("resize", () => {
   if (typeof resizeCanvas === "function") resizeCanvas();
   if (typeof drawConstellationEmphasised === "function") {
